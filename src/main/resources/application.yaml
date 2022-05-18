@@ -1,0 +1,13 @@
+logging:
+  level:
+    com.accenture.gradetoolserver:
+      DEBUG
+jwt:
+  header-name: Authorization
+  token-prefix: Bearer
+  expiration-millis: 999999
+semester.generation:
+  years-in-advance: 4
+spring:
+  jpa:
+    open-in-view: false

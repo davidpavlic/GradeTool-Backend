@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    type: com.zaxxer.hikari.HikariDataSource
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    baseline-on-migrate: true
+    enabled: true
+    locations: classpath:db/migration/develop
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+mail:
+  host: smtp.gmail.com
+  port: 587

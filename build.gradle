@@ -1,0 +1,89 @@
+plugins {
+    id 'org.springframework.boot' version '2.3.2.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+    id 'java-library'
+    id 'java'
+}
+
+group = 'com.accenture'
+version = '1.0.0-SNAPSHOT'
+sourceCompatibility = '11'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.flywaydb:flyway-core'
+
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+
+    // JWT
+    implementation "io.jsonwebtoken:jjwt:0.9.1"
+
+    runtimeOnly 'org.postgresql:postgresql'
+
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+    testImplementation 'org.springframework.security:spring-security-test'
+
+    // AssertJ
+    testImplementation "org.assertj:assertj-core:3.13.2"
+
+    // mockito
+    testImplementation "org.mockito:mockito-core:3.0.0"
+
+    // H2 Database Engine
+    implementation "com.h2database:h2:1.4.199"
+
+    // OpenAPI
+    implementation 'org.springdoc:springdoc-openapi-ui:1.4.8'
+    implementation 'org.springdoc:springdoc-openapi-security:1.4.8'
+
+    // MapStruct
+    implementation "org.mapstruct:mapstruct:1.4.0.Final"
+    annotationProcessor "org.mapstruct:mapstruct-processor:1.4.0.Final"
+    testAnnotationProcessor "org.mapstruct:mapstruct-processor:1.4.0.Final"
+
+    // Lombok
+    compileOnly 'org.projectlombok:lombok:1.18.12'
+    annotationProcessor 'org.projectlombok:lombok:1.18.2'
+}
+
+bootRun {
+    doFirst {
+        File envFile = file(".env")
+
+        if (envFile.exists()) {
+            envFile.readLines().each {
+                if (it != "" && !it.startsWith("#")) {
+                    def (key, value) = it.tokenize("=")
+
+                    if (System.getProperty((String) key) == null) {
+                        environment((String) key, value)
+                    }
+                }
+            }
+        } else {
+            logger.log(LogLevel.WARN, "No env file found")
+        }
+    }
+}
+
+bootJar {
+    enabled = true
+}
+
+compileJava {
+    dependsOn processResources
+    options.compilerArgs += [
+            '-Amapstruct.unmappedTargetPolicy=IGNORE',
+            '-Amapstruct.defaultComponentModel=spring'
+    ]
+}

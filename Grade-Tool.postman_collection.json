@@ -1,0 +1,575 @@
+{
+  "info": {
+    "_postman_id": "4d9e7f2e-5f2f-420c-b965-3741d7d91266",
+    "name": "Grade-Tool",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Workflow 1 (single User)",
+      "item": [
+        {
+          "name": "User",
+          "item": [
+            {
+              "name": "Create User",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "b48f45e9-ab8f-4399-9919-28f8302c321b",
+                    "exec": [
+                      "pm.test(\"Sign Up\", () => {\r",
+                      "    pm.response.to.have.status(201);\r",
+                      "\r",
+                      "    const requestUser = JSON.parse(pm.request.body.raw);\r",
+                      "\r",
+                      "    const responseUser = pm.response.json();\r",
+                      "\r",
+                      "    pm.expect(responseUser.email).to.eql(requestUser.email);\r",
+                      "\r",
+                      "    pm.environment.set(\"user\", JSON.stringify({...responseUser, password: requestUser.password}));\r",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "id": "3a42154b-6ee1-4deb-8a28-577b9a38e507",
+                    "exec": [
+                      "pm.request.headers.remove(header => header.key === \"Authorization\");"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"email\": \"user.1@example.com\",\r\n    \"password\": \"12345\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{url}}/users",
+                  "host": [
+                    "{{url}}"
+                  ],
+                  "path": [
+                    "users"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Login",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "7a9a02bf-9e3e-491c-8096-69ec30c98cf1",
+                    "exec": [
+                      "pm.test(\"Login successful\", () => {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "\r",
+                      "    const responseUser = pm.response.json();\r",
+                      "\r",
+                      "    pm.expect(responseUser.email).to.eql(pm.variables.get(\"email\"));\r",
+                      "\r",
+                      "    const token = pm.response.headers.get(\"Authorization\");\r",
+                      "\r",
+                      "    pm.environment.set(\"token\", token);\r",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "id": "486adee9-36f6-49d7-ae4a-a3e50fa76ca6",
+                    "exec": [
+                      "const user = JSON.parse(pm.environment.get(\"user\"));\r",
+                      "\r",
+                      "pm.variables.set(\"email\", user.email);\r",
+                      "pm.variables.set(\"password\", user.password);"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"email\": \"{{email}}\",\r\n    \"password\": \"{{password}}\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{url}}/login",
+                  "host": [
+                    "{{url}}"
+                  ],
+                  "path": [
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Find all Users",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "3f45e37e-e749-4ecd-a030-4c0781193c17",
+                    "exec": [
+                      "pm.test(\"Find all Users\", () => {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "\r",
+                      "    const users = pm.response.json();\r",
+                      "\r",
+                      "    pm.expect(users.length).to.eql(1);\r",
+                      "})"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{url}}/users",
+                  "host": [
+                    "{{url}}"
+                  ],
+                  "path": [
+                    "users"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ],
+          "protocolProfileBehavior": {},
+          "_postman_isSubFolder": true
+        },
+        {
+          "name": "Subject",
+          "item": [
+            {
+              "name": "Create Subject",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "2cd47ebb-f04c-424e-9ec8-5467e3e88ed0",
+                    "exec": [
+                      "pm.test(\"Create Subject\", () => {\r",
+                      "    pm.response.to.have.status(201);\r",
+                      "\r",
+                      "    const requestSubject = JSON.parse(pm.request.body.raw);\r",
+                      "\r",
+                      "    const responseSubject = pm.response.json();\r",
+                      "\r",
+                      "    pm.expect(responseSubject.name).to.eql(requestSubject.name);\r",
+                      "\r",
+                      "    pm.environment.set(\"subject\", JSON.stringify(responseSubject));\r",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"name\": \"Microsoft Access foolery\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{url}}/subjects",
+                  "host": [
+                    "{{url}}"
+                  ],
+                  "path": [
+                    "subjects"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Find all Subjects",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "0c218571-2712-48a5-8511-85991031cd54",
+                    "exec": [
+                      "pm.test(\"Find all Subjects\", () => {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "\r",
+                      "    const subjects = pm.response.json();\r",
+                      "\r",
+                      "    pm.expect(subjects.length).to.eql(1);\r",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{url}}/subjects",
+                  "host": [
+                    "{{url}}"
+                  ],
+                  "path": [
+                    "subjects"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ],
+          "protocolProfileBehavior": {},
+          "_postman_isSubFolder": true
+        },
+        {
+          "name": "Semester",
+          "item": [
+            {
+              "name": "Find all Semesters",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "843513e0-4d8f-4966-9133-22f3082b2ee5",
+                    "exec": [
+                      "pm.test(\"Find all Semesters\", () => {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "\r",
+                      "    const semesters = pm.response.json();\r",
+                      "\r",
+                      "    pm.expect(semesters.length > 0).to.eql(true);\r",
+                      "\r",
+                      "    pm.environment.set(\"semester\", JSON.stringify(semesters[0]));\r",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{url}}/semesters",
+                  "host": [
+                    "{{url}}"
+                  ],
+                  "path": [
+                    "semesters"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ],
+          "protocolProfileBehavior": {},
+          "_postman_isSubFolder": true
+        },
+        {
+          "name": "SchoolClass",
+          "item": [
+            {
+              "name": "Create SchoolClass",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "fed15aaf-4a23-4c53-8614-c3ac07a013c1",
+                    "exec": [
+                      "pm.test(\"Create SchoolClass\", () => {\r",
+                      "    pm.response.to.have.status(201);\r",
+                      "\r",
+                      "    const requestClass = JSON.parse(pm.request.body.raw);\r",
+                      "\r",
+                      "    const responseClass = pm.response.json();\r",
+                      "\r",
+                      "    pm.expect(responseClass.name).to.eql(requestClass.name);\r",
+                      "\r",
+                      "    pm.environment.set(\"schoolClass\", JSON.stringify(responseClass));\r",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"name\": \"First Class\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{url}}/school-classes",
+                  "host": [
+                    "{{url}}"
+                  ],
+                  "path": [
+                    "school-classes"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ],
+          "protocolProfileBehavior": {},
+          "_postman_isSubFolder": true
+        },
+        {
+          "name": "UserSchoolClass",
+          "item": [
+            {
+              "name": "Enroll in SchoolClass",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "id": "31534ba7-7313-4f97-a6ca-bfc27ff78254",
+                    "exec": [
+                      "const schoolClass = JSON.parse(pm.environment.get(\"schoolClass\"));\r",
+                      "\r",
+                      "pm.variables.set(\"schoolClassId\", schoolClass.id);"
+                    ],
+                    "type": "text/javascript"
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "ed9ab8ba-3030-4a04-96e5-dddab00eef7c",
+                    "exec": [
+                      "pm.test(\"Enroll in SchoolClass\", () => {\r",
+                      "    pm.response.to.have.status(201);\r",
+                      "\r",
+                      "    const schoolClassResponse = pm.response.json();\r",
+                      "\r",
+                      "    const schoolClass = JSON.parse(pm.environment.get(\"schoolClass\"));\r",
+                      "\r",
+                      "    pm.expect(schoolClassResponse.id).to.eql(schoolClass.id);\r",
+                      "    pm.expect(schoolClassResponse.name).to.eql(schoolClass.name);\r",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{url}}/school-classes/{{schoolClassId}}/enroll",
+                  "host": [
+                    "{{url}}"
+                  ],
+                  "path": [
+                    "school-classes",
+                    "{{schoolClassId}}",
+                    "enroll"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get own SchoolClasses",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "36aa2cee-6b82-4b99-9585-241fbbac55ce",
+                    "exec": [
+                      "pm.test(\"Get own SchoolClasses\", () => {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "\r",
+                      "    const classes = pm.response.json();\r",
+                      "\r",
+                      "    const schoolClass = JSON.parse(pm.environment.get(\"schoolClass\"));\r",
+                      "\r",
+                      "    pm.expect(classes.length).to.eql(1);\r",
+                      "\r",
+                      "    pm.expect(classes[0].id).to.eql(schoolClass.id);\r",
+                      "    pm.expect(classes[0].name).to.eql(schoolClass.name);\r",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{url}}/users/own/school-classes",
+                  "host": [
+                    "{{url}}"
+                  ],
+                  "path": [
+                    "users",
+                    "own",
+                    "school-classes"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ],
+          "protocolProfileBehavior": {},
+          "_postman_isSubFolder": true
+        },
+        {
+          "name": "SubjectSchoolClass",
+          "item": [
+            {
+              "name": "Add Subjects to own SchoolClass",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "b7a688db-499d-4eb6-b26c-923ebb1eaaa2",
+                    "exec": [
+                      "pm.test(\"Add Subjects to own SchoolClass\", () => {\r",
+                      "    pm.response.to.have.status(201);\r",
+                      "\r",
+                      "    const successes = (pm.response.json()).successes;\r",
+                      "\r",
+                      "    pm.expect(successes.length).to.eql(1);\r",
+                      "\r",
+                      "    const subjectSchoolClass = successes[0];\r",
+                      "\r",
+                      "    pm.expect(subjectSchoolClass.subject.id).to.eql(pm.variables.get(\"subjectId\"));\r",
+                      "    pm.expect(subjectSchoolClass.semester.id).to.eql(pm.variables.get(\"semesterId\"));\r",
+                      "    pm.expect(subjectSchoolClass.schoolClass.id).to.eql(pm.variables.get(\"schoolClassId\"));\r",
+                      "\r",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "id": "b9e9ceb2-3f83-4fdf-be53-20e00a600503",
+                    "exec": [
+                      "const schoolClass = JSON.parse(pm.environment.get(\"schoolClass\"));\r",
+                      "\r",
+                      "pm.variables.set(\"schoolClassId\", schoolClass.id);\r",
+                      "\r",
+                      "const subject = JSON.parse(pm.environment.get(\"subject\"));\r",
+                      "\r",
+                      "pm.variables.set(\"subjectId\", subject.id);\r",
+                      "\r",
+                      "const semester = JSON.parse(pm.environment.get(\"semester\"));\r",
+                      "\r",
+                      "pm.variables.set(\"semesterId\", semester.id);"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "[\r\n    {\r\n        \"subject\": {\r\n            \"id\": \"{{subjectId}}\"\r\n        },\r\n        \"semester\": {\r\n            \"id\": \"{{semesterId}}\"\r\n        }\r\n    }\r\n]",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{url}}/users/own/school-classes/{{schoolClassId}}/subjects",
+                  "host": [
+                    "{{url}}"
+                  ],
+                  "path": [
+                    "users",
+                    "own",
+                    "school-classes",
+                    "{{schoolClassId}}",
+                    "subjects"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ],
+          "protocolProfileBehavior": {},
+          "_postman_isSubFolder": true
+        }
+      ],
+      "protocolProfileBehavior": {}
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "id": "2e12623a-a81d-48d0-932a-e4ddd2ac8932",
+        "type": "text/javascript",
+        "exec": [
+          "const token = pm.environment.get(\"token\");",
+          "",
+          "if(token) {",
+          "    pm.request.headers.add({key: \"Authorization\", value: token});",
+          "}"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "id": "453a6811-806d-4b84-8904-36d5bc9455d9",
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "protocolProfileBehavior": {}
+}
