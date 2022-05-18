@@ -1,6 +1,7 @@
 plugins {
     id 'org.springframework.boot' version '2.3.2.RELEASE'
     id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+    id "com.microsoft.azure.azurewebapp" version "1.1.0"
     id 'java-library'
     id 'java'
 }
@@ -86,4 +87,17 @@ compileJava {
             '-Amapstruct.unmappedTargetPolicy=IGNORE',
             '-Amapstruct.defaultComponentModel=spring'
     ]
+}
+
+azurewebapp {
+    subscription = '8de123f3-2801-48f4-bcf8-2b4118edb0f0'
+    resourceGroup = 'GradeTool-Backend'
+    appName = 'GradeTool-Backend'
+    pricingTier = 'P1v2'
+    region = 'eastus'
+    runtime {
+        os = 'Linux'
+        webContainer = 'Tomcat 8.5'
+        javaVersion = 'Java 8'
+    }
 }
